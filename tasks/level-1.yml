@@ -1,0 +1,35 @@
+---
+- import_tasks: "level-1/section_01.yml"
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - level-1
+    - section-1
+
+- import_tasks: "level-1/section_02.yml"
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - level-1
+    - section-2
+
+- import_tasks: "level-1/section_03.yml"
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - level-1
+    - section-3
+
+- import_tasks: "level-1/section_04.yml"
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - level-1
+    - section-4
+
+- import_tasks: "level-1/section_05.yml"
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - level-1
+    - section-5

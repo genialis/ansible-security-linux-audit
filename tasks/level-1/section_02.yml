@@ -1,0 +1,444 @@
+---
+- name: 2.1.1 Ensure chargen services are not enabled (Scored)
+  block:
+    - shell: chkconfig --list chargen-dgram 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+    - shell: chkconfig --list chargen-stream 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+
+  when: sysvinit_services and "'2.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.1"
+    - scored
+
+- name: 2.1.2 Ensure daytime services are not enabled (Scored)
+  block:
+    - shell: chkconfig --list daytime-dgram 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+    - shell: chkconfig --list daytime-stream 2>/dev/null | grep ':on'
+      register: result
+      failed_when: >
+        result.rc != 0
+      changed_when: false
+
+  when: sysvinit_services and "'2.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.2"
+    - scored
+
+- name: 2.1.3 Ensure discard services are not enabled (Scored)
+  block:
+    - shell: chkconfig --list discard-dgram 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+    - shell: chkconfig --list discard-stream 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+
+  when: sysvinit_services and "'2.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.3"
+    - scored
+
+- name: 2.1.4 Ensure echo services are not enabled (Scored)
+  block:
+    - shell: chkconfig --list echo-dgram 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+    - shell: chkconfig --list echo-stream 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+
+  when: sysvinit_services and "'2.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.4"
+    - scored
+
+- name: 2.1.5 Ensure time services are not enabled (Scored)
+  block:
+    - shell: chkconfig --list time-dgram 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+
+    - shell: chkconfig --list time-stream 2>/dev/null | grep ':on'
+      register: result
+      failed_when: result.stdout != ''
+      changed_when: false
+
+  when: sysvinit_services and "'2.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.5"
+    - scored
+
+- name: 2.1.6 Ensure tftp server is not enabled (Scored)
+  shell: chkconfig --list 2>/dev/null | grep ':on' | grep 'tftp'
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: sysvinit_services and "'2.1.6' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.6"
+    - scored
+
+- name: 2.1.7 Ensure xinetd is not enabled (Scored)
+  shell: systemctl is-enabled xinetd
+  register: result
+  failed_when: > 
+    'enabled' in result.stdout
+  changed_when: false
+  when: "'2.1.7' not in cis_level_1_exclusions"
+  tags:
+    - "2.1.7"
+    - scored
+
+- name: 2.2.1.1 Ensure time synchronization is in use (Not Scored)
+  block:
+    - shell: rpm -q ntp
+      register: result
+      failed_when: result.stdout == ''
+      changed_when: false
+    - shell: rpm -q chrony
+      register: result
+      failed_when: result.stdout == ''
+      changed_when: false
+  when: "'2.2.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.1.1"
+    - notscored
+
+- name: 2.2.1.2 Ensure ntp is configured (Scored)
+  block:
+    - shell: grep "^restrict" /etc/ntp.conf
+      register: result1
+      failed_when: >
+        'restrict -4 default kod nomodify notrap nopeer noquery' not in result1.stdout and
+        'restrict -6 default kod nomodify notrap nopeer noquery' not in result1.stdout
+      changed_when: false
+    - shell: egrep "^(server|pool)" /etc/ntp.conf
+      register: result2
+      failed_when: "result2.stdout == ''"
+      changed_when: false
+    - shell: grep "^OPTIONS" /etc/sysconfig/ntpd
+      register: result3
+      failed_when: "'-u ntp:ntp' not in result3"
+      changed_when: false
+    - shell: grep "ExecStart" /usr/lib/systemd/system/ntpd.service
+      register: result4
+      failed_when: "'-u ntp:ntp' not in result4"
+      changed_when: false
+  when: "'2.2.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.1.2"
+    - scored
+
+- name: 2.2.1.3 Ensure chrony is configured (Scored)
+  block:
+    - shell: egrep "^(server|pool)" /etc/chrony.conf
+      register: result1
+      failed_when: "result1.stdout == ''"
+      changed_when: false
+    - shell: grep "^OPTIONS" /etc/sysconfig/chronyd
+      register: result2
+      failed_when: "'-u chrony' not in result2"
+      changed_when: false
+  when: "'2.2.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.1.3"
+    - scored
+
+
+- name: 2.2.2 Ensure X Window System is not enabled (Scored)
+  shell: rpm -qa xorg-x11*
+  register: result
+  failed_when: "result.stdout != ''"
+  changed_when: false
+  when: "'2.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.2"
+    - scored
+
+- name: 2.2.3 Ensure Avahi Server is not enabled (Scored)
+  shell: systemctl is-enabled avahi-daemon
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.3"
+    - scored
+
+- name: 2.2.4 Ensure CUPS is not enabled (Scored)
+  shell: systemctl is-enabled cups
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.4' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.4"
+    - scored
+
+- name: 2.2.5 Ensure DHCP server is not enabled (Scored)
+  shell: systemctl is-enabled dhcpd
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.5' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.5"
+    - scored
+
+- name: 2.2.6 Ensure LDAP server is not enabled (Scored)
+  shell: systemctl is-enabled slapd
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.6' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.6"
+    - scored
+
+# Skip this check to allow NFS servers / clients
+- name: 2.2.7 Ensure NFS and RPC are not enabled (Scored)
+  block:
+    - shell: systemctl is-enabled nfs
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+    - shell: systemctl is-enabled nfs-server
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+    - shell: systemctl is-enabled rpcbind
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+  when: "'2.2.7' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.7"
+    - scored
+
+- name: 2.2.8 Ensure DNS Server is not enabled (Scored)
+  shell: systemctl is-enabled named
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.8' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.8"
+    - scored
+
+- name: 2.2.9 Ensure FTP Server is not enabled (Scored)
+  shell: systemctl is-enabled vsftpd
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.9' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.9"
+    - scored
+
+- name: 2.2.10 Ensure HTTP is not enabled (Scored)
+  shell: systemctl is-enabled httpd
+  register: result
+  failed_when: >
+    'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.10' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.10"
+    - scored
+
+- name: 2.2.11 Ensure IMAP and POP3 server is not enabled (Scored)
+  shell: systemctl is-enabled dovecot
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.11' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.11"
+    - scored
+
+- name: 2.2.12 Ensure Samba is not enabled (Scored)
+  shell: systemctl is-enabled smb
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.12' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.12"
+    - scored
+
+- name: 2.2.13 Ensure HTTP Proxy Server is not enabled (Scored)
+  shell: systemctl is-enabled squid
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.13' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.13"
+    - scored
+
+- name: 2.2.14 Ensure SNMP Server is not enabled (Scored)
+  shell: systemctl is-enabled snmpd
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.14' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.14"
+    - scored
+
+- name: 2.2.15 Ensure mail transfer agent is configured for local-only mode (Scored)
+  shell: netstat -an | grep LIST | grep ":25[[:space:]]" | grep -v '127.0.0.1' | grep -v '::1'
+  register: result
+  failed_when: "result.stdout != ''"
+  changed_when: false
+  when: "'2.2.15' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.15"
+    - scored
+
+- name: 2.2.16 Ensure NIS Server is not enabled (Scored)
+  shell: systemctl is-enabled ypserv
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.16' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.16"
+    - scored
+
+- name: 2.2.17 Ensure rsh server is not enabled (Scored)
+  block:
+    - shell: systemctl is-enabled rsh.socket
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+    - shell: systemctl is-enabled rlogin.socket
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+    - shell: systemctl is-enabled rexec.socket
+      register: result
+      failed_when: >
+        'enabled' in result.stdout
+      changed_when: false
+  when: "'2.2.17' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.17"
+    - scored
+
+- name: 2.2.18 Ensure telnet server is not enabled (Scored)
+  shell: systemctl is-enabled telnet.socket
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.18' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.18"
+    - scored
+
+- name: 2.2.19 Ensure tftp server is not enabled (Scored)
+  shell: systemctl is-enabled tftp.socket
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.19' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.19"
+    - scored
+
+- name: 2.2.20 Ensure rsync server is not enabled (Scored)
+  shell: systemctl is-enabled rsyncd
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.20' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.20"
+    - scored
+
+- name: 2.2.21 Ensure talk server is not enabled (Scored)
+  shell: systemctl is-enabled ntalk
+  register: result
+  failed_when: >
+   'enabled' in result.stdout
+  changed_when: false
+  when: "'2.2.21' not in cis_level_1_exclusions"
+  tags:
+    - "2.2.21"
+    - scored
+
+- name: 2.3.1 Ensure NIS Client is not installed (Scored)
+  shell: rpm -q ypbind
+  register: result
+  failed_when: >
+    'not installed' not in result.stdout
+  changed_when: false
+  when: "'2.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "2.3.1"
+    - scored
+
+- name: 2.3.2 Ensure rsh client is not installed (Scored)
+  shell: rpm -q rsh
+  register: result
+  failed_when: >
+    'not installed' not in result.stdout
+  changed_when: false
+  when: "'2.3.2' not in cis_level_1_exclusions"
+  tags:
+    - "2.3.2"
+    - scored
+
+- name: 2.3.3 Ensure talk client is not installed (Scored)
+  shell: rpm -q talk
+  register: result
+  failed_when: >
+    'not installed' not in result.stdout
+  changed_when: false
+  when: "'2.3.3' not in cis_level_1_exclusions"
+  tags:
+    - "2.3.3"
+    - scored
+
+- name: 2.3.4 Ensure telnet client is not installed (Scored)
+  shell: rpm -q telnet
+  register: result
+  failed_when: >
+    'not installed' not in result.stdout
+  changed_when: false
+  when: "'2.3.4' not in cis_level_1_exclusions"
+  tags:
+    - "2.3.4"
+    - scored

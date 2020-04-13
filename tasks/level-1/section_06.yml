@@ -1,0 +1,212 @@
+---
+
+- name: 6.1.2 Ensure permissions on /etc/passwd are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/passwd | egrep "644 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.2"
+    - scored
+
+- name: 6.1.3 Ensure permissions on /etc/shadow are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/shadow | egrep "000 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.3"
+    - scored
+
+- name: 6.1.4 Ensure permissions on /etc/group are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/group | egrep "644 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.4"
+    - scored
+
+- name: 6.1.5 Ensure permissions on /etc/gshadow are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/gshadow | egrep "000 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.5"
+    - scored
+
+- name: 6.1.6 Ensure permissions on /etc/passwd- are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/passwd- | egrep "644 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.6' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.6"
+    - scored
+
+- name: 6.1.7 Ensure permissions on /etc/shadow- are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/shadow- | egrep "000 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.7' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.7"
+    - scored
+
+- name: 6.1.8 Ensure permissions on /etc/group- are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/group- | egrep "644 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.8' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.8"
+    - scored
+
+- name: 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/gshadow- | egrep "000 0 0"
+  register: result
+  changed_when: false
+  when: "'6.1.9' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.9"
+    - scored
+
+- name: 6.1.10 Ensure no world writable files exist (Scored)
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+  #shell: find / -xdev -type f -perm -0002 -print
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.10' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.10"
+    - scored
+
+- name: 6.1.11 Ensure no unowned files or directories exist (Scored)
+  #shell: find / -xdev -type f -perm -0002 -print
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -nouser
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.11' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.11"
+    - scored
+
+- name: 6.1.12 Ensure no ungrouped files or directories exist (Scored)
+  #shell: find / -xdev -type f -perm -0002 -print
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -nogroup
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.12' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.12"
+    - scored
+
+- name: 6.1.13 Audit SUID executables (Not Scored)
+  #shell: find / -xdev -type f -perm -0002 -print
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -type f -perm -4000
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.13' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.13"
+    - scored
+
+- name: 6.1.14 Audit SGID executables (Not Scored)
+  #shell: find / -xdev -type f -perm -0002 -print
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -type f -perm -2000
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.14' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.14"
+    - scored
+
+- name: 6.1.14 Audit SGID executables (Not Scored)
+  #shell: find / -xdev -type f -perm -0002 -print
+  shell: df --local -P | awk {'if (NR!=1) print $6') | xargs -I '{}' find '{}' -xdev -type f -perm -2000
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.1.14' not in cis_level_1_exclusions"
+  tags:
+    - "6.1.14"
+    - scored
+
+
+- name: 6.2.1 Ensure password fields are not empty (Scored)
+  shell: cat /etc/shadow | awk -F ':' '($2 == "") { print $1 " does not have a password "}'
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.2.1' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.1"
+    - scored
+
+- name: 6.2.2 Ensure no legacy "+" entries exist in /etc/passwd (Scored)
+  shell: grep '^\+:' /etc/passwd
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.2"
+    - scored
+
+- name: 6.2.3 Ensure no legacy "+" entries exist in /etc/shadow (Scored)
+  shell: grep '^\+:' /etc/shadow
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.3"
+    - scored
+
+- name: 6.2.4 Ensure no legacy "+" entries exist in /etc/group (Scored)
+  shell: grep '^\+:' /etc/group
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.2.4' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.4"
+    - scored
+
+- name: 6.2.5 Ensure root is the only UID 0 account (Scored)
+  shell: awk -F':' '($3 == 0) { print $1 }' /etc/passwd | grep -qx 'root'
+  register: result
+  failed_when: result.stdout != ''
+  changed_when: false
+  when: "'6.2.5' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.5"
+    - scored
+
+- name: 6.2.18 Ensure no duplicate user names exist (Scored)
+  shell: cut -f1 -d':' /etc/passwd | sort | uniq -c | sort -n | awk ' $1 > 1 {print $2}'
+  register: result
+  failed_when: >
+    result.stdout != ''
+  changed_when: false
+  when: "'6.2.18' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.18"
+    - scored
+
+- name: 6.2.19 Ensure no duplicate group names exist (Scored)
+  shell: cut -f1 -d':' /etc/group | sort | uniq -c | sort -n | awk ' $1 > 1 {print $2}'
+  register: result
+  failed_when: >
+    result.stdout != ''
+  changed_when: false
+  when: "'6.2.19' not in cis_level_1_exclusions"
+  tags:
+    - "6.2.19"
+    - scored

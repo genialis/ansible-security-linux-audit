@@ -1,0 +1,185 @@
+---
+- name: 4.2.1.1 Ensure rsyslog Service is enabled (Scored)
+  shell: systemctl is-enabled rsyslog
+  register: result
+  failed_when: >
+   'enabled' not in result.stdout
+  changed_when: false
+  when: "'4.2.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.1.1"
+    - scored
+
+# TODO: 4.2.1.2 - check /etc/rsyslog.conf and /etc/rsyslog.d/*.conf
+- name: 4.2.1.2 Ensure rsyslog Service is enabled (Scored)
+  block:
+    - shell: ls -l "{{ item }}"
+      register: perm_logfiles
+      changed_when: false
+      with_items:
+        "/var/log"
+    - stat:
+        path: "{{ item }}"
+      register: command
+      failed_when: >
+        command.stat.mode != '0600' or command.stat.pw_name != 'root' or command.stat.gid != 0
+      with_items:
+        "/var/log"
+      changed_when: false
+    - shell: grep "^{{ item }}\s+" /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+      with_items:
+        - "mail.*"
+        - "mail.info"
+        - "mail.warning"
+        - "mail.err"
+        - "news.crit"
+        - "news.err"
+        - "news.notice"
+        - "*.=waring;*.=err"
+        - "*.crit"
+        - "*.*;mail.none;news.none"
+        - "local0,local1.*"
+        - "local2,local3.*"
+        - "local4,local5.*"
+        - "local6,local7.*"
+  when: "'4.2.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.1.2"
+    - notscored
+     
+- name: 4.2.1.3 Ensure rsyslog default file permissions configured (Scored)
+  shell: grep ^\$FileCreateMode /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+  register: result
+  failed_when: >
+   '0640' not in result.stdout
+  changed_when: false
+  when: "'4.2.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.1.3"
+    - scored
+
+- name: 4.2.1.4 Ensure rsyslog is configured to send logs to a remote log host (Scored)
+  shell: grep "^*.*[^I][^I]*@" /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+  register: result
+  failed_when: >
+   result.stdout != ""
+  changed_when: false
+  when: "'4.2.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.1.4"
+    - scored
+
+- name: 4.2.1.5 Ensure remote syslog messages are only accepted on designated log hosts (Not Scored)
+  block:
+    - shell: grep '$ModLoad imtcp' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+      register: result
+      failed_when: >
+       'imtcp' not in result.stdout
+      changed_when: false
+    - shell: grep '$InputTCPServerRun' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+      register: result
+      failed_when: >
+       '514' not in result.stdout
+      changed_when: false
+  when: "'4.2.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.1.5"
+    - notscored
+
+- name: 4.2.2.1 Ensure syslog-ng service is enabled (Scored)
+  shell: systemctl is-enabled syslog-ng
+  register: result
+  failed_when: >
+   'enabled' not in result.stdout
+  changed_when: false
+  when: "'4.2.2.1' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.2.1"
+    - scored
+
+# TODO: review the contents of /etc/syslog-ng/syslog-ng.conf
+- name: 4.2.2.2 Ensure logging is configured (Not Scored)
+  shell: stat -L -c "%a %u %g" /var/log | egrep "600 0 0"
+  register: result
+  failed_when: >
+    result.rc != 0
+  changed_when: false
+  when: "'4.2.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.2.2"
+    - notscored
+
+- name: 4.2.2.3 Ensure syslog-ng default file permissions configured (Scored)
+  shell: grep ^options /etc/syslog-ng/syslog-ng.conf
+  register: result
+  failed_when: >
+    'perm(0640)' not in result
+  changed_when: false
+  when: "'4.2.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.2.3"
+    - scored
+
+- name: 4.2.2.4 Ensure syslog-ng is configured to send logs to a remote log host (Not Scored)
+  shell: grep 'destination logserver' /etc/syslog-ng/syslog-ng.conf
+  register: result
+  failed_when: >
+    result.stdout != ''
+  changed_when: false
+  when: "'4.2.2.4' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.2.4"
+    - notscored
+
+- name: 4.2.2.5 Ensure remote syslog-ng messages are only accepted on designated log hosts (Not Scored)
+  block:
+    - shell: grep "source net{ tcp(); };" /etc/syslog-ng/syslog-ng.conf
+      register: result
+      failed_when: >
+        result.stdout != ''
+      changed_when: false
+    - shell: grep "destination remote" /etc/syslog-ng/syslog-ng.conf
+      register: result
+      failed_when: >
+        result.stdout != ''
+      changed_when: false
+  when: "'4.2.2.5' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.2.5"
+    - notscored
+
+- name: 4.2.3 Ensure rsyslog or syslog-ng is installed (Scored)
+  shell: rpm -q rsyslog syslog-ng | grep -v 'not installed'
+  register: result
+  failed_when: >
+    result.stdout != ''
+  changed_when: false
+  when: "'4.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.3"
+    - scored
+
+# TODO: check no write permissions
+- name: 4.2.4 Ensure permissions on all logfiles are configured (Scored)
+  shell: find /var/log -type f -ls
+  register: result
+  failed_when: >
+    result.stdout != ''
+  changed_when: false
+  when: "'4.2.3.2' not in cis_level_1_exclusions"
+  tags:
+    - "4.2.3.2"
+    - scored
+
+# TODO: manually review
+- name: 4.3 Ensure logrotate is configured (Not Scored)
+  shell: cat /etc/logrotate.conf
+  register: results
+  failed_when: >
+    results.stdout != 0
+  changed_when: false
+  when: "'4.3' not in cis_level_1_exclusions"
+  tags:
+    - "4.3"
+    - notscored
+
