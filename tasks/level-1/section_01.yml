@@ -1,0 +1,432 @@
+---
+- name: 1.1.1.1 Ensure mounting of cramfs filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v cramfs
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module cramfs not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.1"
+    - notscored
+
+- name: 1.1.1.2 Ensure mounting of freevxfs filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v freevxfs
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module freevxfs not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.2"
+    - notscored
+
+- name: 1.1.1.3 Ensure mounting of jffs2 filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v jffs2
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module jffs2 not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.3"
+    - notscored
+
+- name: 1.1.1.4 Ensure mounting of hfs filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v hfs
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module hfs not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.4"
+    - notscored
+
+- name: 1.1.1.5 Ensure mounting of hfsplus filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v hfsplus
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module hfsplus not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.5"
+    - notscored
+
+- name: 1.1.1.6 Ensure mounting of squashfs filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v squashfs
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module squashfs not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.6' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.6"
+    - notscored
+
+- name: 1.1.1.7 Ensure mounting of udf filesystems is disabled (Not Scored)
+  shell: /sbin/modprobe -n -v udf
+  register: modconf
+  failed_when: > 
+   "install /bin/true" not in modconf.stdout and "Module udf not found" not in modconf.stderr
+  changed_when: false
+  when: "'1.1.1.7' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.1.7"
+    - notscored
+
+- name: 1.1.3 Ensure nodev option set on /tmp partition (Scored) 
+  shell: grep "[[:space:]]/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'nodev' not in result.stdout
+  changed_when: false
+  when: "'1.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.3"
+    - scored
+
+- name: 1.1.4 Ensure nosuid option set on /tmp partition (Scored) 
+  shell: grep "[[:space:]]/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'nosuid' not in result.stdout
+  changed_when: false
+  when: "'1.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.4"
+    - scored
+
+- name: 1.1.5 Ensure noexec option set on /tmp partition (Scored) 
+  shell: grep "[[:space:]]/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'noexec' not in result.stdout
+  changed_when: false
+  when: "'1.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.5"
+    - scored
+
+- name: 1.1.8 Ensure nodev option set on /var/tmp partition (Scored) 
+  shell: grep "[[:space:]]/var/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'nodev' not in result.stdout
+  changed_when: false
+  when: "'1.1.8' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.8"
+    - scored
+
+- name: 1.1.9 Ensure nosuid option set on /var/tmp partition (Scored) 
+  shell: grep "[[:space:]]/var/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'nosuid' not in result.stdout
+  changed_when: false
+  when: "'1.1.9' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.9"
+    - scored
+
+- name: 1.1.10 Ensure noexec option set on /var/tmp partition (Scored) 
+  shell: grep "[[:space:]]/var/tmp[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'noexec' not in result.stdout
+  changed_when: false
+  when: "'1.1.10' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.10"
+    - scored
+
+- name: 1.1.14 Ensure nodev option set on /home partition (Scored)
+  shell: grep "[[:space:]]/home[[:space:]]" /etc/fstab
+  register: result
+  failed_when: >
+   'nodev' not in result.stdout
+  changed_when: false
+  when: "'1.1.14' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.14"
+    - scored
+
+- name: 1.1.15 Ensure nodev option set on /dev/shm partition (Scored)
+  shell: grep /dev/shm /etc/fstab
+  register: result
+  failed_when: >
+   'nodev' not in result.stdout
+  changed_when: false
+  when: "'1.1.15' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.15"
+    - scored
+
+- name: 1.1.16 Ensure nosuid option set on /dev/shm partition (Scored)
+  shell: grep /dev/shm /etc/fstab
+  register: result
+  failed_when: >
+   'nosuid' not in result.stdout
+  changed_when: false
+  when: "'1.1.16' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.16"
+    - scored
+
+- name: 1.1.17 Ensure noexec option set on /dev/shm partition (Scored)
+  shell: grep /dev/shm /etc/fstab
+  register: result
+  failed_when: >
+   'noexec' not in result.stdout
+  changed_when: false
+  when: "'1.1.17' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.17"
+    - scored
+
+- name: 1.1.18 Ensure nodev option set on removable media partitions (Not Scored)
+  debug: msg="*** Not relevant."
+  changed_when: false
+  when: "'1.1.18' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.18"
+    - notscored
+
+- name: 1.1.19 Ensure nosuid option set on removable media partitions (Not Scored)
+  debug: msg="*** Not relevant."
+  changed_when: false
+  when: "'1.1.19' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.19"
+    - scored
+
+- name: 1.1.20 Ensure noexec option set on removable media partitions (Not Scored)
+  debug: msg="*** Not relevant."
+  changed_when: false
+  when: "'1.1.20' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.20"
+    - scored
+
+- name: 1.1.21 Ensure sticky bit is set on all world-writeable directories (Scored)
+  shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \)
+  register: result
+  failed_when: result.rc != 0
+  changed_when: false
+  when: "'1.1.21' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.21"
+    - scored
+
+- name: 1.1.22 Disable Automounting (Scored) 
+  shell: systemctl is-enabled autofs
+  register: result
+  failed_when: >
+   'disabled' not in result.stdout
+  ignore_errors: true
+  changed_when: false
+  when: "'1.1.22' not in cis_level_1_exclusions"
+  tags:
+    - "1.1.22"
+    - scored
+
+- name: 1.2.1 Ensure package manager repositories are configured (Not Scored)
+  command: yum repolist # TODO
+  changed_when: false
+  when: "'1.2.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.2.1"
+    - notscored
+
+- name: 1.2.2 Verify Red Hat GPG key is installed (Scored)
+  command: rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey  # TODO
+  changed_when: false
+  when: "'1.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "1.2.2"
+    - scored
+
+- name: 1.2.3 Ensure gpgcheck is globally activated (Scored)
+  shell: grep "^gpgcheck" /etc/yum.conf
+  register: result
+  failed_when: >
+   'gpgcheck=1' not in result.stdout
+  changed_when: false
+  when: "'1.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "1.2.3"
+    - scored
+
+- name: 1.3.1 Ensure AIDE is installed (Scored)
+  shell: rpm -q aide
+  register: result
+  failed_when: >
+    result.rc != 0
+  changed_when: false
+  when: "'1.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.3.1"
+    - scored
+
+- name: 1.3.2 Ensure filesystem integrity is regularly checked (Scored)
+  shell:  crontab -u root -l | grep aide
+  register: check_aide
+  failed_when: >
+   '/usr/sbin/aide --check' not in check_aide.stdout 
+  changed_when: false
+  when: "'1.3.2' not in cis_level_1_exclusions"
+  tags:
+    - "1.3.2"
+    - scored
+
+- name: 1.4.1 Ensure permissions on bootloader config are configured (Scored)
+  shell: grep 'selinux=0' /etc/grub.conf # TODO
+  register: selinux
+  failed_when: >
+   'selinux=0' in  selinux.stdout
+  changed_when: false
+  when: "'1.4.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.4.1"
+    - scored
+
+- name: 1.5.1 Ensure core dumps are restricted (Scored)
+  shell: grep "hard core" /etc/security/limits.conf /etc/security/limits.d/* # TODO
+  register: limits
+  failed_when: >
+   'hard core 0' not in  limits.stdout
+  changed_when: false
+  when: "'1.5.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.5.1"
+    - scored
+
+- name: 1.5.2 Ensure XD/NX support is enabled (Not Scored)
+  shell: dmesg | grep NX # TODO
+  register: result
+  failed_when: >
+   'active' not in  result.stdout
+  changed_when: false
+  when: "'1.5.2' not in cis_level_1_exclusions"
+  tags:
+    - "1.5.2"
+    - notscored
+
+- name: 1.5.3 Ensure address space layout randomization (ASLR) is enabled (Scored)
+  shell: sysctl kernel.randomize_va_space # TODO
+  register: result
+  failed_when: >
+   'kernel.randomize_va_space = 2' not in  result.stdout
+  changed_when: false
+  when: "'1.5.3' not in cis_level_1_exclusions"
+  tags:
+    - "1.5.3"
+    - scored
+
+- name: 1.5.4 Ensure prelink is disabled (Scored)
+  shell: rpm -q prelink # TODO
+  register: result
+  failed_when: >
+   'not installed' not in  result.stdout
+  changed_when: false
+  when: "'1.5.4' not in cis_level_1_exclusions"
+  tags:
+    - "1.5.4"
+    - scored
+
+- name: 1.7.1.1 Ensure message of the day is configured properly (Scored)
+  shell: egrep '(\\v|\\r|\\m|\\s)' /etc/motd
+  register:  result
+  failed_when: result.rc != 0
+  changed_when: false
+  when: "'1.7.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "1.7.1.1"
+    - scored
+
+- name: 1.7.1.2 Ensure local login warning banner is configured properly (Not Scored)
+  shell: egrep '(\\v|\\r|\\m|\\s)' /etc/issue
+  register:  result
+  failed_when: result.rc != 0
+  changed_when: false
+  when: "'1.7.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "1.7.1.2"
+    - notscored
+
+- name: 1.7.1.3 Ensure remote login warning banner is configured properly (Not Scored)
+  shell: egrep '(\\v|\\r|\\m|\\s)' /etc/issue.net
+  register:  result
+  failed_when: result.rc != 0
+  changed_when: false
+  when: "'1.7.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "1.7.1.3"
+    - notscored
+
+- name: 1.7.1.4 Ensure permissions on /etc/motd are configured (Not Scored)
+  shell: stat -L -c "%a %u %g" /etc/motd | egrep "644 0 0"
+  register:  result
+  failed_when: result.rc == 0
+  changed_when: false
+  when: "'1.7.1.4' not in cis_level_1_exclusions"
+  tags:
+    - level-1
+    - section-1
+    - "1.7.1.4"
+    - notscored
+
+- name: 1.7.1.5 Ensure permissions on /etc/issue are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/issue | egrep "644 0 0"
+  register: result
+  failed_when: result.rc == 0
+  ignore_errors: true
+  changed_when: false
+  when: "'1.7.1.5' not in cis_level_1_exclusions"
+  tags:
+    - level-1
+    - section-1
+    - "1.7.1.5"
+    - scored
+
+- name: 1.7.1.6 Ensure permissions on /etc/issue.net are configured (Not Scored)
+  shell: stat -L -c "%a %u %g" /etc/issue.net | egrep "644 0 0"
+  register: result
+  failed_when: result.rc == 0
+  changed_when: false
+  when: "'1.7.1.6' not in cis_level_1_exclusions"
+  tags:
+    - level-1
+    - section-1
+    - "1.7.1.6"
+    - notscored
+
+# We do not use GDM, skip
+- name: 1.7.2 Ensure GDM login banner is configured (Scored)
+  shell: cat /etc/dconf/profile/gdm
+  register:  result
+  failed_when: >
+    'user-db:user' not in result.stdout or
+    'system-db:user' not in result.stdout
+  changed_when: false
+  when: "'1.7.2' not in cis_level_1_exclusions"
+  tags:
+    - level-1
+    - section-1
+    - "1.7.2"
+    - scored
+
+# Skip updates check
+- name: 1.8.1 Ensure updates, patches, and additional security software are installed (Scored)
+  shell: yum check-update --security
+  register:  result
+  failed_when: result.rc != 0
+  changed_when: false
+  when: "'1.8.1' not in cis_level_1_exclusions"
+  tags:
+    - level-1
+    - section-1
+    - "1.8.1"
+    - scored

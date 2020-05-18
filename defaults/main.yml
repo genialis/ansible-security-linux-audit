@@ -1,0 +1,11 @@
+###############################################
+# Values which modify the behaviour of the role
+###############################################
+
+cis_apply_level_1_profile: true    # Whether Level 1 of the benchmark should be applied
+cis_apply_level_2_profile: true    # Whether Level 2 of the benchmark should be applied
+
+# A list of Level 1 recommendations to exclude (i.e. ['1.1.1.1'])
+# 1.1.21 is too slow
+cis_level_1_exclusions: ['1.1.21', '1.8.1']
+cis_level_2_exclusions: []

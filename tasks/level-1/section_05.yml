@@ -1,0 +1,567 @@
+---
+- name: 5.1.1 Ensure cron daemon is enabled (Scored)
+  shell: systemctl is-enabled crond
+  register: result
+  failed_when: >
+   'enabled' not in result.stdout
+  changed_when: false
+  when: "'5.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.1"
+    - scored
+
+- name: 5.1.2 Ensure permissions on /etc/crontab are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/crontab | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.2"
+    - scored
+
+- name: 5.1.3 Ensure permissions on /etc/cron.hourly are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/cron.hourly | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.3"
+    - scored
+
+- name: 5.1.4 Ensure permissions on /etc/cron.daily are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/cron.daily | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.4"
+    - scored
+
+- name: 5.1.5 Ensure permissions on /etc/cron.weekly are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/cron.weekly | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.5"
+    - scored
+
+- name: 5.1.6 Ensure permissions on /etc/cron.monthly are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/cron.monthly | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.6' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.6"
+    - scored
+
+- name: 5.1.7 Ensure permissions on /etc/cron.d are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/cron.monthly | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.1.7' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.7"
+    - scored
+
+- name: 5.1.8 Ensure at/cron is restricted to authorized users (Scored)
+  block:
+    - stat:
+        path: /etc/cron.deny
+      register: atdeny
+      failed_when: >
+        atdeny.stat.exists == True 
+      changed_when: false
+    - stat:
+        path: /etc/at.deny
+      register: atdeny
+      failed_when: >
+        atdeny.stat.exists == True 
+      changed_when: false
+    - shell: stat -L -c "%a %u %g" /etc/cron.allow | egrep ".00 0 0"
+      register: result
+      failed_when: >
+        result.rc == 0
+      changed_when: false
+    - shell: stat -L -c "%a %u %g" /etc/at.allow | egrep ".00 0 0"
+      register: result
+      failed_when: >
+        result.rc == 0
+      changed_when: false
+  when: "'5.1.8' not in cis_level_1_exclusions"
+  tags:
+    - "5.1.8"
+    - scored
+
+- name: 5.2.1 Ensure permissions on /etc/ssh/sshd_config are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/ssh/sshd_config | egrep ".00 0 0"
+  register: result
+  failed_when: >
+    result.rc == 0
+  changed_when: false
+  when: "'5.2.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.1"
+    - scored
+
+- name: 5.2.2 Ensure SSH Protocol is set to 2 (Scored)
+  shell: grep "^Protocol" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'Protocol 2' not in result.stdout
+  changed_when: false
+  when: "'5.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.2"
+    - scored
+
+- name: 5.2.3 Ensure SSH LogLevel is set to INFO (Scored)
+  shell: grep "^LogLevel" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'LogLevel INFO' not in result.stdout
+  changed_when: false
+  when: "'5.2.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.3"
+    - scored
+
+- name: 5.2.4 Ensure SSH X11 forwarding is disabled (Scored)
+  shell: grep "^X11Forwarding" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'X11Forwarding no' not in result.stdout
+  changed_when: false
+  when: "'5.2.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.4"
+    - scored
+
+- name: 5.2.5 Ensure SSH MaxAuthTries is set to 4 or less (Scored)
+  shell: grep "^MaxAuthTries" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'MaxAuthTries 4' not in result.stdout
+  changed_when: false
+  when: "'5.2.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.5"
+    - scored
+
+- name: 5.2.6 Ensure SSH IgnoreRhosts is enabled (Scored)
+  shell: grep "^IgnoreRhosts" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'IgnoreRhosts yes' not in result.stdout
+  changed_when: false
+  when: "'5.2.6' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.6"
+    - scored
+
+- name: 5.2.7 Ensure SSH HostbasedAuthentication is disabled (Scored)
+  shell: grep "^HostbasedAuthentication" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'HostbasedAuthentication no' not in result.stdout
+  changed_when: false
+  when: "'5.2.7' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.7"
+    - scored
+
+- name: 5.2.8 Ensure SSH root login is disabled (Scored)
+  shell: grep "^PermitRootLogin" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'PermitRootLogin no' not in result.stdout
+  changed_when: false
+  when: "'5.2.8' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.8"
+    - scored
+
+- name: 5.2.9 Ensure SSH PermitEmptyPasswords is disabled (Scored)
+  shell: grep "^PermitEmptyPasswords" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'PermitEmptyPasswords no' not in result.stdout
+  changed_when: false
+  when: "'5.2.9' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.9"
+    - scored
+
+- name: 5.2.10 Ensure SSH PermitUserEnvironment is disabled (Scored)
+  shell: grep "^PermitUserEnvironment" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'PermitUserEnvironment no' not in result.stdout
+  changed_when: false
+  when: "'5.2.10' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.10"
+    - scored
+
+- name: 5.2.11 Ensure only approved MAC algorithms are used (Scored)
+  shell: grep "MACs" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" not in result.stdout
+  changed_when: false
+  when: "'5.2.11' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.11"
+    - scored
+
+- name: 5.2.12.1 Ensure SSH Idle Timeout Interval is configured (Scored)
+  shell: grep "^ClientAliveInterval" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    "ClientAliveInterval 300" not in result.stdout
+  changed_when: false
+  when: "'5.2.12' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.12"
+    - scored
+
+- name: 5.2.12.2 Ensure SSH Idle Timeout Interval is configured (Scored)
+  shell: grep "^ClientAliveCountMax" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    "ClientAliveCountMax 0" not in result.stdout
+  changed_when: false
+  when: "'5.2.12' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.12"
+    - scored
+
+- name: 5.2.13 Ensure SSH LoginGraceTime is set to one minute or less (Scored)
+  shell: grep "^LoginGraceTime" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    "LoginGraceTime 60" not in result.stdout
+  changed_when: false
+  when: "'5.2.13' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.13"
+    - scored
+
+# TODO: populate Userlist and grouplist
+- name: 5.2.14.1 Ensure SSH access is limited (Scored)
+  shell: grep "^AllowUsers" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    "AllowUsers <userlist>" not in result.stdout
+  changed_when: false
+  when: "'5.2.13' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.13"
+    - scored
+
+- name: 5.2.15 Ensure SSH warning banner is configured (Scored)
+  shell: grep "^Banner" /etc/ssh/sshd_config
+  register: result
+  failed_when: >
+    'Banner /etc/issue.net' not in result.stdout
+  changed_when: false
+  when: "'5.2.15' not in cis_level_1_exclusions"
+  tags:
+    - "5.2.15"
+    - scored
+
+- name: 5.3.1.1 Ensure password creation requirements are configured (Scored)
+  shell: grep "pam_pwquality.so" /etc/pam.d/password-auth
+  register: result
+  failed_when: >
+    'try_first_pass retry=3' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.2 Ensure password creation requirements are configured (Scored)
+  shell: grep "pam_pwquality.so" /etc/pam.d/system-auth
+  register: result
+  failed_when: >
+    'try_first_pass retry=3' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.3 Ensure password creation requirements are configured (Scored)
+  shell: grep "^minlen" /etc/security/pwquality.conf
+  register: result
+  failed_when: >
+    'minlen = 14' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.4 Ensure password creation requirements are configured (Scored)
+  shell: grep "^dcredit" /etc/security/pwquality.conf
+  register: result
+  failed_when: >
+    'dcredit = -1' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.5 Ensure password creation requirements are configured (Scored)
+  shell: grep "^lcredit" /etc/security/pwquality.conf
+  register: result
+  failed_when: >
+    'lcredit = -1' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.6 Ensure password creation requirements are configured (Scored)
+  shell: grep "^ocredit" /etc/security/pwquality.conf
+  register: result
+  failed_when: >
+    'ocredit = -1' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+- name: 5.3.1.7 Ensure password creation requirements are configured (Scored)
+  shell: grep "^ucredit" /etc/security/pwquality.conf
+  register: result
+  failed_when: >
+    'ucredit = -1' not in result.stdout
+  changed_when: false
+  when: "'5.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.1"
+    - scored
+
+# TODO: check the line before and after
+- name: 5.3.2 Ensure lockout for failed password attempts is configured (Scored)
+  shell: grep "pam_unix.so" /etc/pam.d/password-auth
+  register: result
+  failed_when: >
+    'auth [success=1 default=bad]' not in result.stdout
+  changed_when: false
+  when: "'5.3.2' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.2"
+    - scored
+
+- name: 5.3.3.1 Ensure password reuse is limited (Scored)
+  shell: egrep "^password\s+sufficient\s+pam_unix.so" /etc/pam.d/password-auth
+  register: result
+  failed_when: >
+    'password sufficient pam_unix.so remember=5' not in result.stdout
+  changed_when: false
+  when: "'5.3.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.3"
+    - scored
+
+
+- name: 5.3.3.2 Ensure password reuse is limited (Scored)
+  shell: egrep "^password\s+sufficient\s+pam_unix.so" /etc/pam.d/system-auth
+  register: result
+  failed_when: >
+    'password sufficient pam_unix.so remember=5' not in result.stdout
+  changed_when: false
+  when: "'5.3.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.3"
+    - scored
+
+
+- name: 5.3.4.1 Ensure password hashing algorithm is SHA-512 (Scored)
+  shell: egrep "^password\s+sufficient\s+pam_unix.so" /etc/pam.d/password-auth
+  register: result
+  failed_when: >
+    'password sufficient pam_unix.so sha512' not in result.stdout
+  changed_when: false
+  when: "'5.3.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.4"
+    - scored
+
+
+- name: 5.3.4.2 Ensure password hashing algorithm is SHA-512 (Scored)
+  shell: egrep "^password\s+sufficient\s+pam_unix.so" /etc/pam.d/system-auth
+  register: result
+  failed_when: >
+    'password sufficient pam_unix.so sha512' not in result.stdout
+  changed_when: false
+  when: "'5.3.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.3.4"
+    - scored
+
+# TODO: improve this condition (or less)
+- name: 5.4.1.1 Ensure password expiration is 365 days or less (Scored)
+  shell: grep ^PASS_MAX_DAYS /etc/login.defs
+  register: result
+  failed_when: >
+    'PASS_MAX_DAYS 90' not in result.stdout
+  changed_when: false
+  when: "'5.4.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.1.1"
+    - scored
+
+# TODO: improve this condition (or more)
+- name: 5.4.1.2 Ensure minimum days between password changes is 7 or more (Score)
+  shell: grep ^PASS_MIN_DAYS /etc/login.defs
+  register: result
+  failed_when: >
+    'PASS_MIN_DAYS 7' not in result.stdout
+  changed_when: false
+  when: "'5.4.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.1.2"
+    - scored
+
+# TODO: improve this condition (or more)
+- name: 5.4.1.3 Ensure password expiration warning days is 7 or more (Score)
+  shell: grep ^PASS_WARN_DAYS /etc/login.defs
+  register: result
+  failed_when: >
+    'PASS_WARN_DAYS 7' not in result.stdout
+  changed_when: false
+  when: "'5.4.1.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.1.3"
+    - scored
+
+# TODO: Actually, we dont want this functionality
+- name: 5.4.1.4 Ensure inactive password lock is 30 days or less (Score)
+  shell: useradd -D | grep INACTIVE
+  register: result
+  failed_when: >
+    'INACTIVE=30' not in result.stdout
+  changed_when: false
+  when: "'5.4.1.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.1.4"
+    - scored
+
+# TODO: This step is currently done manually
+- name: 5.4.1.5 Ensure all users last password change date is in the past (Scored)
+  shell: cat /etc/shadow | cut -d ':' -f 1
+  register: result
+  failed_when: >
+    result.rc != 0
+  changed_when: false
+  when: "'5.4.1.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.1.5"
+    - scored
+
+- name: 5.4.2 Ensure system accounts are non-login (Scored)
+  shell: egrep -v "^\+" /etc/passwd | awk -F ':' '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $3<1000 && $7!="/sbin/nologin" && $7!="/bin/false") {print}'
+  register: result
+  failed_when: >
+    result.rc != 0
+  changed_when: false
+  when: "'5.4.2' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.2"
+    - scored
+
+- name: 5.4.3 Ensure default group for the root account is GID 0 (Scored)
+  shell: grep "^root:" /etc/passwd | cut -f4 -d ':'
+  register: result
+  failed_when: >
+    result.stdout !+ 0
+  changed_when: false
+  when: "'5.4.3' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.3"
+    - scored
+
+- name: 5.4.4.1 Ensure default user umask is 027 or more restrictive (Scored)
+  shell: grep "umask" /etc/bashrc
+  register: result
+  failed_when: >
+    'umask 027' not in result.stdout
+  changed_when: false
+  when: "'5.4.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.4"
+    - scored
+
+- name: 5.4.4.2 Ensure default user umask is 027 or more restrictive (Scored)
+  shell: grep "umask" /etc/profile /etc/profile.d/*.sh
+  register: result
+  failed_when: >
+    'umask 027' not in result.stdout
+  changed_when: false
+  when: "'5.4.4' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.4"
+    - scored
+
+- name: 5.4.5.1 Ensure default user shell timeout is 900 seconds or less (Scored)
+  shell: grep "^TMOUT" /etc/bashrc
+  register: result
+  failed_when: >
+    'TMOUT=600' not in result.stdout
+  changed_when: false
+  when: "'5.4.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.5"
+    - scored
+
+- name: 5.4.5.2 Ensure default user shell timeout is 900 seconds or less (Scored)
+  shell: grep "^TMOUT" /etc/profile
+  register: result
+  failed_when: >
+    'TMOUT=600' not in result.stdout
+  changed_when: false
+  when: "'5.4.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.4.5"
+    - scored
+
+- name: 5.5 Ensure root login is restricted to system console (Not Scored)
+  shell: cat /etc/securetty
+  register: result
+  failed_when: >
+    stdout.rc == 0
+  changed_when: false
+  when: "'5.5' not in cis_level_1_exclusions"
+  tags:
+    - "5.5"
+    - notscored
+
+- name: 5.6 Ensure access to the su command is restricted (Scored)
+  shell: grep pam_wheel.so /etc/pam.d/su
+  register: result
+  failed_when: >
+    'auth required pam_wheel.so use_uid' not in result.stdout
+  changed_when: false
+  when: "'5.6' not in cis_level_1_exclusions"
+  tags:
+    - "5.6"
+    - scored

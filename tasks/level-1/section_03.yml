@@ -1,0 +1,380 @@
+---
+- name: 3.1.1 Ensure IP forwarding is disabled (Scored)
+  block:
+    - shell: sysctl net.ipv4.ip_forward
+      register: result
+      failed_when: >
+        'net.ipv4.ip_forward = 0' not in result
+      changed_when: false
+    - shell: grep "net\.ipv4\.ip_forward" /etc/sysctl.conf /etc/sysctl.d/
+      register: result
+      failed_when: >
+        'net.ipv4.ip_forward = 0' not in result
+      changed_when: false
+  when: "'3.1.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.1.1"
+    - scored
+
+- name: 3.1.2 Ensure packet redirect sending is disabled (Scored)
+  shell: sysctl net.ipv4.conf.all.send_redirects;  sysctl net.ipv4.conf.default.send_redirects
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.send_redirects = 0" not in result.stdout or 
+    "net.ipv4.conf.default.send_redirects = 0" not in result.stdout
+  changed_when: false
+  when: "'3.1.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.1.2"
+    - scored
+
+- name: 3.2.1 Ensure source routed packets are not accepted (Scored)
+  shell: sysctl net.ipv4.conf.all.accept_source_route;  sysctl net.ipv4.conf.default.accept_source_route
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.accept_source_route = 0" not in result.stdout or 
+    "net.ipv4.conf.default.accept_source_route = 0" not in result.stdout
+  changed_when: false
+  when: "'3.2.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.1"
+    - scored
+
+- name: 3.2.2 Ensure ICMP redirects are not accepted (Scored)
+  shell: sysctl net.ipv4.conf.all.accept_redirects;  sysctl net.ipv4.conf.default.accept_redirects
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.accept_redirects = 0" not in result.stdout or 
+    "net.ipv4.conf.default.accept_redirects = 0" not in result.stdout
+  changed_when: false
+  when: "'3.2.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.2"
+    - scored
+
+- name: 3.2.3 Ensure secure ICMP redirects are not accepted (Scored)
+  shell: sysctl net.ipv4.conf.all.secure_redirects;  sysctl net.ipv4.conf.default.secure_redirects
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.secure_redirects = 0" not in result.stdout or 
+    "net.ipv4.conf.default.secure_redirects = 0" not in result.stdout
+  changed_when: false
+  when: "'3.2.3' not in cis_level_1_exclusions"
+
+  tags:
+    - "3.2.3"
+    - scored
+
+- name: 3.2.4 Ensure suspicious packets are logged (Scored)
+  shell: sysctl net.ipv4.conf.all.log_martians; sysctl net.ipv4.conf.default.log_martians
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.log_martians = 1" not in result.stdout or 
+    "net.ipv4.conf.default.log_martians = 1" not in result.stdout
+  changed_when: false
+  when: "'3.2.4' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.4"
+    - scored
+
+- name: 3.2.5 Ensure broadcast ICMP requests are ignored (Scored)
+  shell: sysctl net.ipv4.icmp_echo_ignore_broadcasts
+  register: result
+  failed_when: >
+    "net.ipv4.icmp_echo_ignore_broadcasts = 1" not in result.stdout
+  changed_when: false
+  when: "'3.2.5' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.5"
+    - scored
+
+- name: 3.2.6 Ensure bogus ICMP responses are ignored (Scored)
+  shell: sysctl net.ipv4.icmp_ignore_bogus_error_responses
+  register: result
+  failed_when: >
+    "net.ipv4.icmp_ignore_bogus_error_responses = 1" not in result.stdout
+  changed_when: false
+  when: "'3.2.6' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.6"
+    - scored
+
+- name: 3.2.7 Ensure Reverse Path Fildering is enabled (Scored)
+  shell: sysctl net.ipv4.conf.all.rp_filter; sysctl net.ipv4.conf.default.rp_filter
+  register: result
+  failed_when: >
+    "net.ipv4.conf.all.rp_filter = 1" not in result.stdout or 
+    "net.ipv4.conf.default.rp_filter = 1" not in result.stdout
+  changed_when: false
+  when: "'3.2.7' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.7"
+    - scored
+
+- name: 3.2.8 Ensure TCP SYN Cookies is enabled (Scored)
+  shell: sysctl net.ipv4.tcp_syncookies
+  register: result
+  failed_when: >
+    "net.ipv4.tcp_syncookies = 1" not in result.stdout
+  changed_when: false
+  when: "'3.2.8' not in cis_level_1_exclusions"
+  tags:
+    - "3.2.8"
+    - scored
+
+- name: 3.3.1 Ensure IPv6 router advertisements are not accepted (Not Scored)
+  shell: sysctl net.ipv6.conf.all.accept_ra;  sysctl net.ipv6.conf.default.accept_ra
+  register: result
+  failed_when: >
+    "net.ipv6.conf.all.accept_ra = 0" not in result.stdout or 
+    "net.ipv6.conf.default.accept_ra = 0" not in result.stdout
+  changed_when: false
+  when: "'3.3.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.3.1"
+    - notscored
+
+- name: 3.3.2 Ensure IPv6 redirects are not accepted (Not Scored)
+  shell: sysctl net.ipv6.conf.all.accept_redirects;  sysctl net.ipv6.conf.default.accept_redirects
+  register: result
+  failed_when: >
+    "net.ipv6.conf.all.accept_redirects = 0" not in result.stdout or 
+    "net.ipv6.conf.default.accept_redirects = 0" not in result.stdout
+  changed_when: false
+  when: "'3.3.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.3.2"
+    - notscored
+
+- name: 3.3.3 Ensure IPv6 is disabled (Not Scored)
+  shell: grep "^\s*linux" /boot/grub2/grub.cfg | grep -v "ipv6.disable=1"
+  register: result
+  failed_when: "result.stdout != ''"
+  changed_when: false
+  when: "'3.3.3' not in cis_level_1_exclusions"
+  tags:
+    - "3.3.3"
+    - notscored
+
+- name: 3.4.1 Ensure TCP Wrappers is installed (Scored)
+  shell: rpm -q tcp_wrappers
+  register: result
+  failed_when: >
+    'is not installed' not in result.stdout 
+  changed_when: false
+  when: "'3.4.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.4.1"
+    - scored
+
+# This needs to be checked manually
+- name: 3.4.2 Ensure /etc/hosts.allow is configured (Scored)
+  stat:
+    path: /etc/hosts.allow
+  register: result
+  failed_when: >
+    result.stat.exists == False
+  changed_when: false
+  when: "'3.4.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.4.2"
+    - scored
+
+- name: 3.4.3 Ensure /etc/hosts.deny is configured (Scored)
+  shell: "grep 'ALL: ALL' /etc/hosts.deny"
+  register: result
+  failed_when: >
+    'ALL: ALL' not in result.stdout
+  changed_when: false
+  when: "'3.4.3' not in cis_level_1_exclusions"
+  tags:
+    - "3.4.3"
+    - scored
+
+- name: 3.4.4 Ensure permissions on /etc/hosts.allow are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/hosts.allow | egrep "644 0 0"
+  register: results
+  failed_when: "results.stdout == ''"
+  changed_when: false
+  when: "'3.4.4' not in cis_level_1_exclusions"
+  tags:
+    - "3.4.4"
+    - scored
+
+- name: 3.4.5 Ensure permissions on /etc/hosts.deny are configured (Scored)
+  shell: stat -L -c "%a %u %g" /etc/hosts.deny | egrep "644 0 0"
+  register: results
+  failed_when: "results.stdout == ''"
+  changed_when: false
+  when: "'3.4.5' not in cis_level_1_exclusions"
+  tags:
+    - "3.4.5"
+    - scored
+
+- name: 3.5.1 Ensure DCCP is disabled (Not Scored)
+  block:
+    - shell: modprobe -n -v dccp
+      register: results
+      failed_when: >
+        'install /bin/true' not in results.stdout
+      changed_when: false
+    - shell: lsmod | grep dccp
+      register: results
+      failed_when: "results.stdout != ''"
+      changed_when: false
+  when: "'3.5.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.5.1"
+    - notscored
+
+- name: 3.5.2 Ensure SCTP is disabled (Not Scored)
+  block:
+    - shell: modprobe -n -v sctp
+      register: results
+      failed_when: >
+        'install /bin/true' not in results.stdout
+      changed_when: false
+    - shell: lsmod | grep sctp
+      register: results
+      failed_when: "results.stdout != ''"
+      changed_when: false
+  when: "'3.5.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.5.2"
+    - notscored
+
+- name: 3.5.3 Ensure RDS is disabled (Not Scored)
+  block:
+    - shell: modprobe -n -v rds
+      register: results
+      failed_when: >
+        'install /bin/true' not in results.stdout
+      changed_when: false
+    - shell: lsmod | grep rds
+      register: results
+      failed_when: "results.stdout != ''"
+      changed_when: false
+  when: "'3.5.3' not in cis_level_1_exclusions"
+  tags:
+    - "3.5.3"
+    - notscored
+
+- name: 3.5.4 Ensure TIPC is disabled (Not Scored)
+  block:
+    - shell: modprobe -n -v tipc
+      register: results
+      failed_when: >
+        'install /bin/true' not in results.stdout
+      changed_when: false
+    - shell: lsmod | grep tipc
+      register: results
+      failed_when: "results.stdout != ''"
+      changed_when: false
+  when: "'3.5.4' not in cis_level_1_exclusions"
+  tags:
+    - "3.5.4"
+    - notscored
+
+- name: 3.6.1 Ensure iptables is installed (Scored)
+  shell: rpm -q iptables
+  register: results
+  failed_when: >
+    'is not installed' in results.stdout 
+  changed_when: false
+  when: "'3.6.1' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.1"
+    - scored
+
+# Alternatively check for REJECT (instead of DROP)
+- name: 3.6.2 Ensure default deny firewall policy (Scored)
+  shell: iptables -L
+  register: results
+  failed_when: >
+    'Chain INPUT (policy DROP)' not in results.stdout 
+    'Chain FORWARD (policy DROP)' not in results.stdout 
+    'Chain OUTPUT (policy DROP)' not in results.stdout 
+  changed_when: false
+  when: "'3.6.2' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.2"
+    - scored
+
+# Check this manually
+- name: 3.6.3 Ensure loopback traffic is configured (Scored)
+  shell: iptables -L INPUT -v -n | awk '{print $3, $7, $8}'
+  register: results
+  failed_when: >
+    'ACCEPT lo 0.0.0.0/0' not in results.stdout or
+    'DROP * 127.0.0.0/8' not in results.stdout
+  changed_when: false
+  when: "'3.6.3' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.3"
+    - scored
+
+- name: 3.6.3 Ensure loopback traffic is configured (Scored)
+  block:
+    - shell: iptables -L INPUT -v -n | awk '{print $3, $6, $7, $8}'
+      register: results
+      failed_when: >
+        'ACCEPT lo * 0.0.0.0/0' not in results.stdout or
+        'DROP * * 127.0.0.0/8' not in results.stdout
+      changed_when: false
+    - shell: iptables -L OUTPUT -v -n | awk '{print $3, $6, $7, $8}'
+      register: results
+      failed_when: >
+        'ACCEPT * lo 0.0.0.0/0' not in results.stdout
+      changed_when: false
+  when: "'3.6.3' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.3"
+    - scored
+
+- name: 3.6.4 Ensure outbound and established connections are configured (Not Scored)
+  block:
+    - shell: iptables -L INPUT -v -n | awk '{print $3, $4, $7, $8, $11}'
+      register: results
+      failed_when: >
+        'ACCEPT tcp * 0.0.0.0/0 ESTABLISHED' not in results.stdout or
+        'ACCEPT udp * 0.0.0.0/0 ESTABLISHED' not in results.stdout or
+        'ACCEPT icmp * 0.0.0.0/0 ESTABLISHED' not in results.stdout
+      changed_when: false
+    - shell: iptables -L OUTPUT -v -n | awk '{print $3, $4, $7, $8, $11}'
+      register: results
+      failed_when: >
+        'ACCEPT tcp * 0.0.0.0/0 NEW,ESTABLISHED' not in results.stdout or
+        'ACCEPT udp * 0.0.0.0/0 NEW,ESTABLISHED' not in results.stdout or
+        'ACCEPT icmp * 0.0.0.0/0 NEW,ESTABLISHED' not in results.stdout
+      changed_when: false
+  when: "'3.6.4' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.4"
+    - notscored
+
+# Check ports manually
+- name: 3.6.5 Ensure firewall rules exist for all open ports (Scored)
+  block:
+    - shell: netstat -ln | grep '0.0.0.0:*'
+      register: results
+      failed_when: results.rc != 0
+      changed_when: false
+    - shell: iptables -L INPUT -v -n
+      register: results
+      failed_when: results.rc != 0
+      changed_when: false
+  when: "'3.6.5' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.5"
+    - scored
+
+- name: 3.6.6 Ensure wireless interfaces are disabled (Not Scored
+  shell: ip link show up | grep ' wl' | wc
+  register: results
+  failed_when: >
+    results.stdout != '0'
+  changed_when: false
+  when: "'3.6.6' not in cis_level_1_exclusions"
+  tags:
+    - "3.6.6"
+    - notscored
